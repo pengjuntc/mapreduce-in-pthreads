@@ -18,7 +18,7 @@ This program is written by Jun Peng, which is a program assignment of parallel p
 //Macros defined here 
 #define MAXLEN 50
 #define SIZE 10     // the size of bounded buffer
-#define ALLOCSIZE 100
+#define ALLOCSIZE 50
 
 
 //struct to store word and its corresponding file name and line num
@@ -112,7 +112,8 @@ void *producer(void *arg) {
                 if(strlen(line) == 0) {  //if line is empty string like space, skip it
                         continue;         
                 }
-
+                //printf("%s\n", line);
+                
                 int cnum = hash(line) % NC; //hash the line to the corresponding consumer
                 Word w;
                 strcpy(w.word, line);
@@ -129,6 +130,7 @@ void *producer(void *arg) {
                 pthread_cond_signal(&fill[cnum]);
                 pthread_mutex_unlock(&mutex[cnum]);
                 //end of producer pattern
+                
         }
 
         fclose(fp);
@@ -160,7 +162,7 @@ void *consumer(void *arg) {
                 pthread_mutex_unlock(&mutex[num]);
                 //end of consumer pattern
                 
-
+                
 
                 //store w into hashtable
                 HASH_FIND_STR(users, w.word, s);
@@ -172,7 +174,7 @@ void *consumer(void *arg) {
                         strcpy(s->value, str);
                         free(str);
                 } else {
-                        char *str = (char *)malloc(sizeof(char) * 20);
+                        char *str = (char *)malloc(sizeof(char) * MAXLEN);
                         s = (struct my_struct*)malloc(sizeof(struct my_struct));
                         strcpy(s->name, w.word);
                         sprintf(str, "(%s: %d)", w.filename, w.linenum);
@@ -304,17 +306,19 @@ int main(int argc, char *argv[]) {
         //spawn m produecers, m is taken from the terminal
         char str[nproducer][MAXLEN];
         for(i = 0; i < nproducer; i++) {
-                sprintf(str[i], "file%d.txt", i+1);
+                sprintf(str[i], "testfiles/file%d.txt", i+1);
+                //printf("%s\n", str[i]);
                 rc = pthread_create(&ptid[i], NULL, producer, str[i]); //producer threads
                 assert(rc == 0);
         }
+        
         
         //spawn n consumers, n is taken from the terminal
         for(i = 0; i < nconsumer; i++) {
                 rc = pthread_create(&ctid[i], NULL, consumer, (void *)i); //consumer threads
                 assert(rc == 0);
         }
-             
+            
         for(i = 0; i < nproducer; i++) {
                 rc = pthread_join(ptid[i], NULL); //join producer threads
                 assert(rc == 0);
@@ -336,7 +340,7 @@ int main(int argc, char *argv[]) {
         }
 
         //printf("EXIT NORMALLY\n");
-
+        
         freeAllMemory();
         return 0;
 }
