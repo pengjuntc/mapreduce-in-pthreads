@@ -18,6 +18,7 @@ The target of the program is to simulate MapReduce in pthreads. In a nutshell, t
 
 *Version 1*
 Typical producer pattern in multithreads programming:
+```
 //producer
 for(;;) {
         lock(&mutex);
@@ -40,7 +41,7 @@ for(;;) {
         signal(&empty);
         unlock(&mutex);
 }
-
+```
 
 The above producer and consumer pattern is typically used for multiple producers and consumers sharing one bounded buffer. The producer acquires the lock and checks if the buffer is full or not. If the buffer is full, it waits for consumer consuming items. Otherwise it puts the item into the bounded buffer, signals the consumer and releases the lock. In consumer thread, the consumer acquires the lock and checks if the buffer is empty or not. If the buffer is empty, it waits for producer putting items into the buffer. Otherwise it consumes the item, signals the producer and releases the lock.
 
@@ -49,7 +50,8 @@ The above producer and consumer pattern is typically used for multiple producers
 In the MapReduce, each consumer has one bounded buffer sharing with multiple producers. Producers put items to corresponding consumer buffer according to the hash of item. So the pattern above should be modified as shown below.
 
 *Version 2*
-/producer
+```
+//producer
 for(;;) {
         num = hash(item)
         lock(&mutex[num]);
@@ -72,14 +74,15 @@ for(;;) {
         signal(&empty[num]);
         unlock(&mutex[num]);
 }
-
+```
 
 
 
 Consider that the producer reads word from file and terminates when it reaches the EOF, the above pseudocode is modified as shown below.
 
 *Version 3*
-/producer
+```
+//producer
 while(item = readline()) {
         num = hash(item)
         lock(&mutex[num]);
@@ -103,12 +106,13 @@ for(;;) {
         unlock(&mutex[num]);
 }
 
-
+```
 
 However, it is likely that the consumer threads wait forever. Considering a scenario that all producers terminate and the counts are 0, the consumer threads would just fall into the while(count == 0){} and can't be waked up by any producer since all producers ternimate. So the producers have to broadcast to all consumers that they have terminated. Thus consumers can be waked up. The modified pseudocode is shown below.
 
 *Version 4*
-/producer
+```
+//producer
 while(item = readline()) {
         num = hash(item)
         lock(&mutex[num]);
@@ -145,12 +149,13 @@ while(count[num] != 0) {
 if all producers terminate; then
    signal = 1
    broadcast(&fill[num]) for all num
-
+```
 
 
 If we add the hashtable data structure in the consumer, the below code illustrates the whole idea behind the source code (mapreduce.c).
 
 *Version 5* 
+```
 //producer
 while(item = readline()) {
         num = hash(item)
@@ -190,7 +195,7 @@ while(count[num] != 0) {
 if all producers terminate; then
    signal = 1
    broadcast(&fill[num]) for all num
-
+```
 
 2.  Usage
 The instruction for running the source code:
