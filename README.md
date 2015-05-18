@@ -1,4 +1,4 @@
-MapReduce in Pthreads     03/09/2015     Jun Peng
+#mapreduce-in-pthreads
 
 In this folder, it contains 
    1) README.txt, which is this file. It explains the code.
