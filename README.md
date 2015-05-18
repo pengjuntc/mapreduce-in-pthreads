@@ -12,11 +12,11 @@ In this folder, it contains
 
 In this file, I introduce the design motivation behind the source code, mainly talking the strategy to modify the producer-consumer pattern to meet our requirements for MapReduce. At the end of the file, the instruction to run the source code is given.
 
-1. Design motivation
+1.  Design motivation
 The target of the program is to simulate MapReduce in pthreads. In a nutshell, there are m Map threads and n Reduce threads which are specified by the user. Then Map thread i reads file file(i).txt line by line. Assume that each file contains exactly one word per line. SO each Map thread reads its corresponding file. Then each Map thread hashes the word and computes an integer from 1 to n (the number of Reduce threads). The hash function I use is taken from webpage(http://www.cse.yorku.ca/~oz/hash.html). Then Map thread sends the word and its file name and line number (struct Word is used in the source code) to the Reduce thread. Reduce thread gets the word and stores it into a hash table. SO this is a typical producer and consumer problem in multithread programming.
 
 
-*Version 1
+*Version 1*
 Typical producer pattern in multithreads programming:
 //producer
 for(;;) {
@@ -48,7 +48,7 @@ The above producer and consumer pattern is typically used for multiple producers
 
 In the MapReduce, each consumer has one bounded buffer sharing with multiple producers. Producers put items to corresponding consumer buffer according to the hash of item. So the pattern above should be modified as shown below.
 
-*Version 2
+*Version 2*
 /producer
 for(;;) {
         num = hash(item)
@@ -78,7 +78,7 @@ for(;;) {
 
 Consider that the producer reads word from file and terminates when it reaches the EOF, the above pseudocode is modified as shown below.
 
-*Version 3
+*Version 3*
 /producer
 while(item = readline()) {
         num = hash(item)
@@ -107,7 +107,7 @@ for(;;) {
 
 However, it is likely that the consumer threads wait forever. Considering a scenario that all producers terminate and the counts are 0, the consumer threads would just fall into the while(count == 0){} and can't be waked up by any producer since all producers ternimate. So the producers have to broadcast to all consumers that they have terminated. Thus consumers can be waked up. The modified pseudocode is shown below.
 
-*Version 4
+*Version 4*
 /producer
 while(item = readline()) {
         num = hash(item)
@@ -150,7 +150,7 @@ if all producers terminate; then
 
 If we add the hashtable data structure in the consumer, the below code illustrates the whole idea behind the source code (mapreduce.c).
 
-*Version 5 
+*Version 5* 
 //producer
 while(item = readline()) {
         num = hash(item)
@@ -192,7 +192,7 @@ if all producers terminate; then
    broadcast(&fill[num]) for all num
 
 
-2. Usage
+2.  Usage
 The instruction for running the source code:
    1. open terminal
    2. run make, then you'll see an executable named "index"
@@ -207,7 +207,7 @@ The output.txt records the output for running program with command: ./index -p 2
 Note that the file name for Map threads is strict. It should be named as file1.txt, file2.txt, etc.
 
 
-3. Reference
+3.  Reference
 In the source code, I use hash function which is taken from http://www.cse.yorku.ca/~oz/hash.html and hash table from http://troydhanson.github.io/uthash/userguide.html. The rest of code is totally written by myself.
 
 //END OF README
