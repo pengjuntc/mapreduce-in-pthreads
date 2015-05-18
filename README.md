@@ -208,6 +208,6 @@ Note that the file name for Map threads is strict. It should be named as file1.t
 
 
 3.    Reference
-In the source code, I use hash function which is taken from http://www.cse.yorku.ca/~oz/hash.html and hash table from http://troydhanson.github.io/uthash/userguide.html. The rest of code it totally written by myself.
+In the source code, I use hash function which is taken from http://www.cse.yorku.ca/~oz/hash.html and hash table from http://troydhanson.github.io/uthash/userguide.html. The rest of code is totally written by myself.
 
 //END OF README
