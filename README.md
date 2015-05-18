@@ -3,7 +3,7 @@
 In this folder, it contains 
    1. README.txt, which is this file. It explains the code.
    2. mapreduce.c, which is the source code.
-   3. uthash.h, which is written by Troy D. Hanson (http://troydhanson.github.io/uthash/userguide.html). It provides hash table for the source code.
+   3. uthash.h, which is written by [Troy D. Hanson](http://troydhanson.github.io/uthash/userguide.html). It provides hash table for the source code.
    4. Makefile, which builds an executable named "index".
    5. file1.txt, file2.txt... file24.txt, which are provided by instructor to test the program.
    6. output.txt, which is an exmaple output by running the source code.
@@ -213,6 +213,6 @@ Note that the file name for Map threads is strict. It should be named as file1.t
 
 
 ###Reference   
-In the source code, I use hash function which is taken from http://www.cse.yorku.ca/~oz/hash.html and hash table from http://troydhanson.github.io/uthash/userguide.html. The rest of code is totally written by myself.
+In the source code, I use hash function which is taken from [here](http://www.cse.yorku.ca/~oz/hash.html) and hash table from [Troy D. Hanson](http://troydhanson.github.io/uthash/userguide.html).
 
 //END OF README
